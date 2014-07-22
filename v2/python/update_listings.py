@@ -50,8 +50,8 @@ def main(argv):
 
     listing_response_us = service.edits().listings().update(
         editId=edit_id, packageName=package_name, language='en-US',
-        body={'description': 'Dessert trunk truck',
-              'promoText': 'Bacon ipsum',
+        body={'fullDescription': 'Dessert trunk truck',
+              'shortDescription': 'Bacon ipsum',
               'title': 'App Title US'}).execute()
 
     print ('Listing for language %s was updated.'
@@ -59,8 +59,8 @@ def main(argv):
 
     listing_response_gb = service.edits().listings().update(
         editId=edit_id, packageName=package_name, language='en-GB',
-        body={'description': 'Pudding boot lorry',
-              'promoText': 'Pancetta ipsum',
+        body={'fullDescription': 'Pudding boot lorry',
+              'shortDescription': 'Pancetta ipsum',
               'title': 'App Title UK'}).execute()
 
     print ('Listing for language %s was updated.'
