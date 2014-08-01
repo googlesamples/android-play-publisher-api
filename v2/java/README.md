@@ -5,7 +5,7 @@ A collection of Java samples for the Play Developer API.
 ## Installation
 
 1. Download the Google Play Developer API client library:
-https://developers.google.com/android-publisher/v2/libraries
+https://developers.google.com/android-publisher/libraries
 
 2. Unzip the client library. The unzipped folder contains the
 google-api-services-androidpublisher-v2.jar client library and a lib/ folder with all required
