@@ -57,7 +57,7 @@ the same directory and rename it to `key.p12`.
 3. Execute the script:
 
   ```bash
-  $ python basic_list_apks.py
+  $ python basic_list_apks_service_account.py
   ```
 
 4. The script will output a list of apks.
