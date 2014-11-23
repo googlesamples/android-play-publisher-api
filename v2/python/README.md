@@ -28,7 +28,7 @@ A collection of command-line samples for the Play Developer Publishing API.
 2. Execute any of the scripts to begin the auth flow:
 
   ```bash
-  $ python basic_list_apks.py
+  $ python basic_list_apks.py com.myapp.package
   ```
 
   A browser window will open and ask you to login. Make sure the account has
@@ -42,7 +42,7 @@ A collection of command-line samples for the Play Developer Publishing API.
 
 4. The script will output a list of apks.
 
-5. The tokens will be stored in `adsense.dat`. Remove this file to restart the
+5. The tokens will be stored in `androidpublisher.dat`. Remove this file to restart the
  auth flow.
 
 
@@ -57,7 +57,7 @@ the same directory and rename it to `key.p12`.
 3. Execute the script:
 
   ```bash
-  $ python basic_list_apks_service_account.py
+  $ python basic_list_apks_service_account.py com.myapp.package
   ```
 
 4. The script will output a list of apks.
