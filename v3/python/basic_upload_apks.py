@@ -65,7 +65,7 @@ def main(argv):
         packageName=package_name,
         body={u'releases': [{
             u'name': u'My first API release',
-            u'versionCodes': [str([apk_response['versionCode']])],
+            u'versionCodes': [str(apk_response['versionCode'])],
             u'status': u'completed',
         }]}).execute()
 
