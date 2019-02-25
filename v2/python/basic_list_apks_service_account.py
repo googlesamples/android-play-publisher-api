@@ -20,7 +20,7 @@ import argparse
 
 from apiclient.discovery import build
 import httplib2
-from oauth2client import client
+from oauth2client.service_account import ServiceAccountCredentials
 
 
 SERVICE_ACCOUNT_EMAIL = (
@@ -33,20 +33,15 @@ argparser.add_argument('package_name',
 
 
 def main():
-  # Load the key in PKCS 12 format that you downloaded from the Google APIs
-  # Console when you created your Service account.
-  f = file('key.p12', 'rb')
-  key = f.read()
-  f.close()
-
   # Create an httplib2.Http object to handle our HTTP requests and authorize it
   # with the Credentials. Note that the first parameter, service_account_name,
   # is the Email address created for the Service account. It must be the email
   # address associated with the key that was created.
-  credentials = client.SignedJwtAssertionCredentials(
+  # The second parameter is the path to your PKCS 12 key
+  credentials = ServiceAccountCredentials.from_p12_keyfile(
       SERVICE_ACCOUNT_EMAIL,
-      key,
-      scope='https://www.googleapis.com/auth/androidpublisher')
+      'key.p12',
+      scopes='https://www.googleapis.com/auth/androidpublisher')
   http = httplib2.Http()
   http = credentials.authorize(http)
 
@@ -70,7 +65,7 @@ def main():
       print 'versionCode: %s, binary.sha1: %s' % (
           apk['versionCode'], apk['binary']['sha1'])
 
-  except client.AccessTokenRefreshError:
+  except oauth2client.client.AccessTokenRefreshError:
     print ('The credentials have been revoked or expired, please re-run the '
            'application to re-authorize')
 
