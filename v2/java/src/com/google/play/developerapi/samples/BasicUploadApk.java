@@ -52,6 +52,7 @@ public class BasicUploadApk {
      * 'rollout'.
      */
     private static final String TRACK_ALPHA = "alpha";
+    private static final String TRACK_BETA = "beta";
 
     public static void main(String[] args) {
         try {
@@ -88,15 +89,29 @@ public class BasicUploadApk {
 
             // Assign apk to alpha track.
             List<Integer> apkVersionCodes = new ArrayList<>();
-            apkVersionCodes.add(apk.getVersionCode());
+
+            //untrack beta
             Update updateTrackRequest = edits
+                .tracks()
+                .update(ApplicationConfig.PACKAGE_NAME,
+                    editId,
+                    TRACK_BETA,
+                    new Track().setVersionCodes(apkVersionCodes);
+            Track updatedTrack =updateTrackRequest.execute();
+            log.info(String.format("Track %s has been updated.", updatedTrack.getTrack()));
+
+            //track alpha
+            apkVersionCodes.add(apk.getVersionCode());
+            Update updateTrackRequest2 = edits
                     .tracks()
                     .update(ApplicationConfig.PACKAGE_NAME,
                             editId,
                             TRACK_ALPHA,
                             new Track().setVersionCodes(apkVersionCodes));
-            Track updatedTrack = updateTrackRequest.execute();
-            log.info(String.format("Track %s has been updated.", updatedTrack.getTrack()));
+            Track updatedTrack2 = updateTrackRequest2.execute();
+            log.info(String.format("Track %s has been updated.", updatedTrack2.getTrack()));
+
+
 
             // Commit changes for edit.
             Commit commitRequest = edits.commit(ApplicationConfig.PACKAGE_NAME, editId);
