@@ -21,8 +21,8 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -34,6 +34,7 @@ import com.google.api.services.androidpublisher.AndroidPublisher;
 import com.google.api.services.androidpublisher.AndroidPublisherScopes;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
@@ -41,6 +42,8 @@ import java.util.Collections;
 
 import javax.annotation.Nullable;
 
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -59,8 +62,8 @@ public class AndroidPublisherHelper {
 
     static final String MIME_TYPE_APK = "application/vnd.android.package-archive";
 
-    /** Path to the private key file (only used for Service Account auth). */
-    private static final String SRC_RESOURCES_KEY_P12 = "src/resources/key.p12";
+    /** Path to the service account json file (only used for Service Account auth). */
+    private static final String SRC_RESOURCES_KEY_JSON = "src/resources/service_account.json";
 
     /**
      * Path to the client secrets file (only used for Installed Application
@@ -92,20 +95,20 @@ public class AndroidPublisherHelper {
      */
     private static FileDataStoreFactory dataStoreFactory;
 
-    private static Credential authorizeWithServiceAccount(String serviceAccountEmail)
-            throws GeneralSecurityException, IOException {
-        log.info(String.format("Authorizing using Service Account: %s", serviceAccountEmail));
+    private static HttpRequestInitializer authorizeWithServiceAccount()
+            throws IOException {
+        log.info("Authorizing using Service Account.");
 
-        // Build service account credential.
-        GoogleCredential credential = new GoogleCredential.Builder()
-                .setTransport(HTTP_TRANSPORT)
-                .setJsonFactory(JSON_FACTORY)
-                .setServiceAccountId(serviceAccountEmail)
-                .setServiceAccountScopes(
-                        Collections.singleton(AndroidPublisherScopes.ANDROIDPUBLISHER))
-                .setServiceAccountPrivateKeyFromP12File(new File(SRC_RESOURCES_KEY_P12))
-                .build();
-        return credential;
+        // Build service account credentials.
+        var credentials = GoogleCredentials.fromStream(new FileInputStream(SRC_RESOURCES_KEY_JSON))
+                .createScoped(Collections.singletonList(AndroidPublisherScopes.ANDROIDPUBLISHER));
+
+        // Creates a HttpRequestInitializer with a 2 minute timout as per Google documentation.
+        return httpRequest -> {
+            new HttpCredentialsAdapter(credentials).initialize(httpRequest);
+            httpRequest.setConnectTimeout(2 * 60000);  // 2 minutes connect timeout
+            httpRequest.setReadTimeout(2 * 60000);  // 2 minutes read timeout
+        };
     }
 
     /**
@@ -182,16 +185,16 @@ public class AndroidPublisherHelper {
 
         // Authorization.
         newTrustedTransport();
-        Credential credential;
+        HttpRequestInitializer requestInitializer;
         if (serviceAccountEmail == null || serviceAccountEmail.isEmpty()) {
-            credential = authorizeWithInstalledApplication();
+            requestInitializer = authorizeWithInstalledApplication();
         } else {
-            credential = authorizeWithServiceAccount(serviceAccountEmail);
+            requestInitializer = authorizeWithServiceAccount();
         }
 
         // Set up and return API client.
         return new AndroidPublisher.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(applicationName)
+                HTTP_TRANSPORT, JSON_FACTORY, requestInitializer).setApplicationName(applicationName)
                 .build();
     }
 

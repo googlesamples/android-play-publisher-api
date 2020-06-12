@@ -53,15 +53,12 @@ to restart the auth flow.
 
 ### First request using OAuth2: Service accounts
 
-1. Edit `ApplicationConfig.java` and add the service account email
-address.
+1. Copy the service account json file, generated in the Google APIs Console into
+the same directory and rename it to `service_account.json`.
 
-2. Copy the service account key file, generated in the Google APIs Console into
-the same directory and rename it to `key.p12`.
+2. Execute any sample class using its `main()` method in your IDE
 
-3. Execute any sample class using its `main()` method in your IDE
-
-4. The script will output a list of apks.
+3. The script will output a list of apks.
 
 
 > You're all set and ready to run the Play Developer API samples.
