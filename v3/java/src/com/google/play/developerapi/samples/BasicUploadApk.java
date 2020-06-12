@@ -16,7 +16,6 @@
 
 package com.google.play.developerapi.samples;
 
-import com.google.api.client.util.Lists;
 import com.google.api.services.androidpublisher.model.LocalizedText;
 import com.google.api.services.androidpublisher.model.TrackRelease;
 import java.io.File;
