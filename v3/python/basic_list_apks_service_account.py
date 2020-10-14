@@ -21,6 +21,7 @@ import argparse
 from apiclient.discovery import build
 import httplib2
 from oauth2client import client
+from oauth2client.service_account import ServiceAccountCredentials
 
 
 SERVICE_ACCOUNT_EMAIL = (
@@ -35,9 +36,7 @@ argparser.add_argument('package_name',
 def main():
   # Load the key in PKCS 12 format that you downloaded from the Google APIs
   # Console when you created your Service account.
-  f = file('key.p12', 'rb')
-  key = f.read()
-  f.close()
+  key = 'key.p12'
 
   # Create an httplib2.Http object to handle our HTTP requests and authorize it
   # with the Credentials. Note that the first parameter, service_account_name,
@@ -46,7 +45,7 @@ def main():
   credentials = client.SignedJwtAssertionCredentials(
       SERVICE_ACCOUNT_EMAIL,
       key,
-      scope='https://www.googleapis.com/auth/androidpublisher')
+      scopes=['https://www.googleapis.com/auth/androidpublisher'])
   http = httplib2.Http()
   http = credentials.authorize(http)
 
