@@ -1,9 +1,0 @@
-.project
-.metadata
-bin/**
-libs/**
-src/resources/*.apk
-src/resources/*.bak
-local.properties
-.classpath
-.settings/
