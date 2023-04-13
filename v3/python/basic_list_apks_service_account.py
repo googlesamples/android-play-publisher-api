@@ -67,8 +67,8 @@ def main():
         editId=edit_id, packageName=package_name).execute()
 
     for apk in apks_result['apks']:
-      print 'versionCode: %s, binary.sha1: %s' % (
-          apk['versionCode'], apk['binary']['sha1'])
+      print('versionCode: %s, binary.sha1: %s' % (
+          apk['versionCode'], apk['binary']['sha1']))
 
   except client.AccessTokenRefreshError:
     print ('The credentials have been revoked or expired, please re-run the '
